@@ -47,7 +47,7 @@
                         </div>
                     </td>
                     <td>{{user.id}}</td>
-                    <td>{{user.fullName}}</td>
+                    <td><a href="javascript:;" class="btn-link" ng-click="edit(user)">{{user.fullName}}</a></td>
                     <td>{{user.jobTitle}}</td>
                     <td>{{user.depID}}</td>
                     <td>{{user.account}}</td>
@@ -81,7 +81,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-xs-4" for="txt-name"><?php echo static::HTML_REQUIRED ?> Công việc:</label>
+                                <label class="control-label col-xs-4" for="txt-name"><?php echo static::HTML_REQUIRED ?> Chức danh:</label>
                                 <div class="col-xs-8">
                                     <input type="text" id="txt-name" name="jobTitle" ng-model="editing.jobTitle" required class="form-control">
                                 </div>

@@ -104,14 +104,10 @@ RED.ngApp.controller('userTestCtrl', function ($scope, $http, $apply, $timeout) 
     };
 
     $scope.edit = function (userTest) {
-        userTest = userTest || {'id': 0};
+        userTest = userTest || {'id': 0, 'deleted': 0};
         $scope.editing = $.extend({}, userTest);
 
-        if(userTest.deleted) {
-            $scope.editing.stt = userTest.deleted == 0;
-        } else {
-            $scope.editing.stt = false;
-        }
+        $scope.editing.stt = userTest.deleted == 0;
 
         $timeout(function () {
             $($scope.modalEdit).modal('show');
