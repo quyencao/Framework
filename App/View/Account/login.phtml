@@ -1,0 +1,83 @@
+<?php
+$this->setTitle('Đăng nhập');
+?>
+
+
+<!-- BACKGROUND IMAGE -->
+<!--===================================================-->
+<div id="bg-overlay" class=""></div>
+
+
+<!-- HEADER -->
+<!--===================================================-->
+<div class="cls-header cls-header-lg">
+    <div class="cls-brand">
+        <a class="box-inline">
+                <!-- <img alt="Nifty Admin" src="img/logo.png" class="brand-icon"> -->
+            <span class="brand-title">Hệ thống <span class="text-thin"><?php echo $appName ?></span></span>
+        </a>
+    </div>
+</div>
+<!--===================================================-->
+
+
+<!-- LOGIN FORM -->
+<!--===================================================-->
+<div class="cls-content">
+    <div class="cls-content-sm panel">
+        <div class="panel-body">
+            <p class="pad-btm">Trang đăng nhập</p>
+
+            <form method="post" id="form-login">
+                <?php if (isset($error)): ?>
+                    <div class="alert alert-danger">
+                        <?php
+                        switch ($error) {
+                            case 'notFound':
+                                echo 'Không tìm thấy tài khoản';
+                                break;
+                            case 'inactive':
+                                echo 'Tài khoản không hoạt động';
+                                break;
+                            case 'wrongPassword':
+                                echo 'Sai mật khẩu';
+                                break;
+                            case 'badRequest':
+                            default:
+                                echo 'Lỗi xảy ra khi đăng nhập';
+                        }
+                        ?>
+                    </div>
+                <?php endif; ?>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                        <input type="text" class="form-control" name="account" id="account" type="text" 
+                               autofocus="" required value="<?php echo isset($account) ? $account : '' ?>" placeholder="Tài khoản"
+                               data-bv-notempty-message="Vui lòng nhập tài khoản"
+                               />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                        <input type="password" class="form-control" placeholder="Mật khẩu"
+                               name="password" id="password" value="<?php echo isset($password) ? $password : '' ?>" required
+                               data-bv-notempty-message="Vui lòng nhập mật khẩu"
+                               />
+                    </div>
+                </div>
+                <div class="form-group text-right">
+                    <button class="btn btn-success text-uppercase" type="submit">Đăng nhập</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--===================================================-->
+
+<script>
+    $(function () {
+        $('#form-login').bootstrapValidator();
+    });
+</script>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="article" active="true">
+    <permissions>
+        <group name="">
+            <pem id="vietnhap" name="Viết nháp"/>
+            <pem id="bientap" name="Biên tập"/>
+            <pem id="duyet" name="Duyệt"/>
+        </group>
+    </permissions>
+    <settings>
+        <group name="Giao diện">
+        </group>
+        <group name="Email SMTP">
+        </group>
+    </settings>
+</application>

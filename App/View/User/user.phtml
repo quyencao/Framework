@@ -1,0 +1,251 @@
+<?php
+
+use App\View\Layout\DefaultLayout;
+use App\Models\DepartmentEntity;
+
+/* @var $this DefaultLayout */
+/* @var $department DepartmentEntity */
+/* @var $editDep DepartmentEntity */
+$this->setTitle('Tài khoản')
+        ->setSideMenuActive('user')
+        ->addJs(array(
+            $this->themeUrl() . '/components/DepartmentPicker/DepartmentPicker.js',
+            $this->themeUrl() . '/js/views/userCtrl.js',
+        ));
+
+function ulTemplate($level, $maxDepth = 10) {
+    $parent = 'lvl' . ($level - 1);
+    $class = 'lvl' . $level;
+    ?>
+    <ul class="<?php echo $class ?>" ng-if="<?php echo $parent ?>.deps.length">
+        <li ng-repeat="<?php echo "{$class} in {$parent}.deps" ?>" 
+            ng-click="setSelected(<?php echo $class ?>, $event)" 
+            ng-class="<?php echo "{expand: $class.expand, selected: $class.id==depID}" ?>">
+            <i class='fa' ng-if="!<?php echo $class ?>.deps.length"></i>
+            <i class='fa' ng-if="<?php echo $class ?>.deps.length" ng-click="toggleExpand(<?php echo $class ?>)"
+               ng-class="<?php echo "{'fa-caret-right': !$class.expand, 'fa-caret-down': $class.expand}" ?>"></i>
+            <span>
+                <i class="fa" ng-class="<?php echo "{'fa-folder-o': !$class.expand, 'fa-folder-open-o': $class.expand}" ?>"></i>
+                {{<?php echo $class ?>.depName}}
+            </span>
+            <?php
+            if ($level < $maxDepth) {
+                ulTemplate($level + 1);
+            }
+            ?>
+        </li>
+    </ul>
+    <?php
+}
+?>
+
+<style>
+    .tbl-row{height: 40px;position: relative;}
+    table .fa-folder-open-o{color: #fbc02d;}
+    table .fa-user{color: #ccc;}
+    .tbl-type .fa{font-size: 1.5em;}
+    table th{min-width: 50px;}
+    table th:nth-child(5){width: 100%;}
+    table th:last-child{min-width: 120px;}
+    .parent-dep{position: relative;}
+    .parent-dep > span{position: absolute;right: 10px;top:0; height: 34px; line-height: 34px;display: inline-block;font-size: 21px;}
+    #editDep{background: white;cursor: pointer;}
+    span.id{color: gray}
+    #filter-name{width: 200px;}
+    #user-tree .panel-body{min-height: 300px;}
+    .tree{display: flex;}
+    .tree .tree-left{width: 250px;margin-right: 10px;}
+    .tree .tree-left .panel-body{padding-left: 10px;padding-right: 10px;box-sizing: border-box;overflow-x: auto;}
+    .tree .tree-right{flex: 1;box-sizing: border-box;}
+</style>
+<!--style rieng cho tree-left-->
+<style>
+    .tree .tree-left .fa{font-size: 1.3em;color: gray;width: 15px;text-align: center;}
+    .tree .tree-left .fa-folder-o, .tree .tree-left .fa-folder-open-o{color:#FBC02D;margin-right: 5px;}
+    .tree .tree-left ul{list-style-type: none; }
+    .tree .tree-left ul li{min-height: 30px;line-height: 30px; cursor: pointer;clear: both;}
+    .tree .tree-left ul li.selected{background: #eee;}
+    .tree .tree-left ul li.selected ul, .tree .tree-left ul li.selected li{background: white;}
+    .tree .tree-left ul li.selected > .fa-caret-down,
+    .tree .tree-left ul li.selected > .fa-caret-right,
+    .tree .tree-left .panel-body > ul{padding: 0;}
+    .tree .tree-left li.hover{background: #eee;}
+    .tree .tree-left ul{padding-left: 15px;}
+    .tree .tree-left ul > li > ul{max-height: 0;overflow: hidden;}
+    .tree .tree-left ul > li.expand > ul{max-height: none;}
+</style>
+
+<angular ng-cloak ng-controller="userCtrl">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">Tài khoản</h1>
+        </div>
+    </div>
+
+    <ol class="breadcrumb">
+        <li>
+            <div class="btn-group">
+                <a href="javascript:;" ng-class="<?php echo "{'disabled': !depID}" ?>" ng-click="goUp()"  class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Quay lại">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+                <a href="#" ng-class="<?php echo "{'disabled': !depID}" ?>" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Trở về gốc">
+                    <i class="fa fa-home"></i>
+                </a>
+            </div>
+        </li>
+        <li ng-repeat="ancestor in department.ancestors">
+            <a href="#/{{ancestor.id}}">{{ancestor.depName}}</a>
+        </li>
+        <li class="active">{{department.depName}}</li>
+    </ol>
+
+    <div class="tree">
+        <div class="tree-left">
+            <div class="panel" id="dep-tree">
+                <div class="panel-body">
+                    <ul>
+                        <li class="expand" ng-click="setSelected(root, $event)"  ng-class="<?php echo "{selected: root.id==depID}" ?>">
+                            <i class="fa fa-caret-down"></i>&nbsp;<span>{{root.depName}}</span>
+                        </li>
+                        <ul>
+                            <li ng-repeat='lvl1 in depTree.deps' ng-class="<?php echo "{expand: lvl1.expand, selected: lvl1.id==depID}" ?>" 
+                                ng-click="setSelected(lvl1, $event)" ng-dblclick="submit()">
+                                <i class='fa' ng-if="!lvl1.deps.length"></i>
+                                <i class='fa' ng-if="lvl1.deps.length" ng-click="toggleExpand(lvl1)"
+                                   ng-class="<?php echo "{'fa-caret-right': !lvl1.expand, 'fa-caret-down': lvl1.expand}" ?>"></i>
+                                <span>
+                                    <i class="fa" ng-class="<?php echo "{'fa-folder-o': !lvl1.expand, 'fa-folder-open-o': lvl1.expand}" ?>"></i> {{lvl1.depName}}
+                                </span>
+<?php ulTemplate(2) ?>
+                            </li>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="tree-right">
+            <div class="panel" id="user-tree">
+                <div class="panel-body">
+                    <div>
+                        <div class="pull-left">
+                            <!--buttons-->
+                            <button class="btn btn-primary btn-labeled fa fa-user" ng-click="editUser()">
+                                Thêm tài khoản
+                            </button>
+                            <button class="btn btn-success btn-labeled fa fa-folder-open-o" ng-click="editDep()">
+                                Thêm đơn vị
+                            </button>
+                            <button type="button" class="btn btn-default btn-labeled fa fa-exchange" ng-disabled="!anythingChecked()" ng-click="move()">Chuyển tới</button>
+                            <button type="button" class="btn btn-default btn-labeled fa fa-trash" ng-disabled="!anythingChecked()" ng-click="delete()">Xóa</button>
+                            <!--end buttons-->
+                        </div>
+                        <div class="pull-right">
+                            <input type="text" class="form-control"  id="filter-name" name="search" placeholder="tìm đơn vị, người dùng" ng-model="filter.search"/>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <h4></h4>
+                    <table class="table table-record  table-striped table-hover" ng-show="department">
+                        <thead>
+                            <tr>
+                                <th class="center">
+                                    <label class="check">
+                                        <input type="checkbox" />
+                                        <before></before>
+                                        <after></after>
+                                    </label>
+                                </th>
+                                <th class="center">Loại</th>
+                                <th></th>
+                                <th>ID</th>
+                                <th>Tên</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-if="department && !department.users.length && !department.deps.length && !filter.search">
+                                <td colspan="6" class="center"><Br>Chưa có thư mục và tài khoản trong đơn vị.<br>&nbsp;</td>
+                            </tr>
+                            <tr ng-if="searchResult && !searchResult.users.length && !searchResult.departments.length">
+                                <td colspan="6" class="center"><Br>Không tìm thấy kết quả nào.<br>&nbsp;</td>
+                            </tr>
+
+                            <tr ng-repeat="childDep in deps()" ng-class="<?php echo "{'stt-active': childDep.stt, 'stt-inactive': !childDep.stt}" ?>">
+                                <td class="center ">
+                                    <div class="tbl-check">
+                                        <input type="checkbox" value="{{childDep.id}}" ng-model="checkedDeps[childDep.id]" />
+                                    </div>
+                                </td>
+                                <td class="tbl-type center">
+                                    <i class="fa fa-folder-open-o"></i>
+                                </td>
+                                <td class="tbl-actions center">
+                                    <div class="dropdown">
+                                        <a href="javascript:;" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars"></i></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="javascript:;" ng-click="editDep(childDep)">Sửa</a></li>
+                                            <li><a href="javascript:;" ng-click="deleteDep(childDep)">Xóa</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td><span class="id">{{childDep.id}}</span></td>
+                                <td class="tbl-text">
+                                    <a href="#/{{childDep.id}}" class="btn-link">{{childDep.depName}}</a> 
+                                    <br>
+                                    Đơn vị/Phòng ban
+                                </td>
+                                <td>
+                                    <div ng-if="childDep.stt" class="label label-table label-success">Hoạt động</div>
+                                    <div ng-if="!childDep.stt" class="label label-table label-dark">Không hoạt động</div>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="user in users()" ng-class="<?php echo "{'stt-active': user.stt, 'stt-inactive': !user.stt}" ?>">
+                                <td class="center">
+                                    <div class="tbl-check">
+                                        <input type="checkbox" value="{{user.id}}" ng-model="checkedUsers[user.id]" ng-disabled="user.isAdmin"/>
+                                    </div>
+                                </td>
+                                <td class="tbl-type center">
+                                    <i class="fa fa-user"></i>
+                                </td>
+                                <td class="tbl-actions center">
+                                    <div class="dropdown">
+                                        <a href="javascript:;" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars"></i></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="javascript:;" ng-click="editUser(user)">Sửa</a></li>
+                                            <li><a href="javascript:;" ng-click="copyUser(user)">Sao chép</a></li>
+                                            <li><a href="javascript:;" ng-if="!user.isAdmin" ng-click="deleteUser(user)">Xóa</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td><span class="id">{{user.id}}</span></td>
+                                <td class="tbl-text">
+                                    <a href="javascript:;" class="btn-link" ng-click="editUser(user)">{{user.fullName}}</a>
+                                    <br>
+                                    {{user.jobTitle}}
+                                </td>
+                                <td>
+                                    <div ng-if="user.stt" class="label label-table label-success">Hoạt động</div>
+                                    <div ng-if="!user.stt" class="label label-table label-dark">Không hoạt động</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><!--panel body-->
+            </div><!--panel-->
+        </div>
+    </div><!--row-->
+
+
+
+
+
+    <!--department form-->
+<?php require __DIR__ . '/editDep.phtml' ?>
+    <!--user form-->
+    <?php require __DIR__ . '/editUser.phtml' ?>
+
+    <!--department picker-->
+    <div ng-department-picker></div>
+</angular>

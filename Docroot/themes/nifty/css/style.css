@@ -1,0 +1,24 @@
+body, .form-control{color: black;font-size: 13px;}
+#container {
+    opacity: 1;
+    visibility: visible;
+}
+#navbar .brand-title{padding-left: 15px;}
+#page-title, #page-title .page-header{padding-top: 0;padding-left: 0;}
+span.required{color: brown;opacity: 0.8;}
+.center{text-align: center;}
+.label-table{width: auto;display: block;max-width: none;}
+input[type="checkbox"], input[type="radio"]{vertical-align: middle;margin:0;}
+label.check{margin:0;}
+.dropdown-menu{border-color: #ccc;}
+.breadcrumb{padding:0;}
+[ng-cloak]{display: none !important;}
+.breadcrumb li, .breadcrumb li a{color:inherit;font-size: 1em;}
+.page-header{color: #333;}
+.form-control, .chosen-container-multi .chosen-choices{border-color: #7A7A7A;}
+.navbar-top-links > li > a, .navbar-top-links > li.open > a{color: #2B579A;}
+.row.row-tight{margin-left: -5px;margin-right: -5px;}
+.row.row-tight [class^="col-"]:not(.pad-no){padding-left: 5px; padding-right: 5px;}
+.flex{display: flex;}
+.flex .f1{flex: 1}
+.tab-base .nav-tabs>li:not(.active)>a{opacity: 1;}

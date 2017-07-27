@@ -1,0 +1,127 @@
+<?php
+
+    $this->addJs(array(
+        $this->themeUrl() . '/js/viewsTest/userTestCtrl.js',
+        $this->themeUrl() . '/components/UserPicker/UserPicker.js'
+    ))->setSideMenuActive('user-test');
+?>
+
+<div id="page-title">
+    <h1 class="page-header text-overflow">User Test</h1>
+</div>
+
+<angular ng-cloak ng-controller="userTestCtrl">
+    <div class="panel">
+        <div class="panel-body">
+            <button class="btn btn-primary btn-labeled fa fa-plus" ng-click="edit()">Thêm mới</button>
+            <button class="btn btn-default" ng-click="delete()" ng-disabled="getChecked().length == 0">Xóa</button>
+
+            <table class="table table-striped table-hover table-record">
+                <thead>
+                <tr>
+                    <th style="min-width: 50px;" class="center">
+                        <input type="checkbox" ng-model="checkedAll" />
+                    </th>
+                    <th style="min-width: 50px;" class="center">&nbsp;</th>
+                    <th style="min-width: 50px;">ID</th>
+                    <th style="min-width: 150px;">Tên đầy đủ</th>
+                    <th style="width: 100%;">Chức danh</th>
+                    <th style="min-width: 150px;">Phòng ban</th>
+                    <th style="min-width: 150px;">Tài khoản</th>
+                    <th style="min-width: 150px;">Mật khẩu</th>
+                    <th style="min-width: 150px;">Hoạt động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="user in usersTest">
+                    <td class="center">
+                        <input type="checkbox"  ng-model="checked[user.id]"/>
+                    </td>
+                    <td class="tbl-actions center">
+                        <div class="dropdown">
+                            <a href="javascript:;" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="javascript:;" ng-click="edit(user)">Sửa</a></li>
+                                <li><a href="javascript:;" ng-click="delete(user.id)">Xóa</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td>{{user.id}}</td>
+                    <td>{{user.fullName}}</td>
+                    <td>{{user.jobTitle}}</td>
+                    <td>{{user.depID}}</td>
+                    <td>{{user.account}}</td>
+                    <td>{{user.pass}}</td>
+<!--                    <td><a href="javascript:;" class="btn-link" ng-click="edit(user)">{{group.groupName}}</a></td>-->
+                    <td>
+                        <span class="label label-table label-success" ng-if="user.deleted != 1">Hoạt động</span>
+                        <span class="label label-table label-default" ng-if="user.deleted == 1">Không hoạt động</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div><!--panel-body-->
+    </div><!--panel-->
+
+    <form class="form-horizontal" id="form-edit">
+        <!-- Modal -->
+        <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-dom="modalEdit">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Người dùng</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Nav tabs -->
+                            <div class="form-group">
+                                <label class="control-label col-xs-4" for="txt-code"><?php echo static::HTML_REQUIRED ?> Tên đầy đủ:</label>
+                                <div class="col-xs-8">
+                                    <input type="text" id="txt-code" name="fullName" ng-model="editing.fullName" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4" for="txt-name"><?php echo static::HTML_REQUIRED ?> Công việc:</label>
+                                <div class="col-xs-8">
+                                    <input type="text" id="txt-name" name="jobTitle" ng-model="editing.jobTitle" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4" for="txt-name"><?php echo static::HTML_REQUIRED ?> Phòng ban:</label>
+                                <div class="col-xs-8">
+                                    <input type="text" id="txt-name" name="depID" ng-model="editing.depID" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4" for="txt-name"><?php echo static::HTML_REQUIRED ?> Tài khoản:</label>
+                                <div class="col-xs-8">
+                                    <input type="text" id="txt-name" name="account" ng-model="editing.account" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4" for="txt-name"><?php echo static::HTML_REQUIRED ?> Mật khẩu:</label>
+                                <div class="col-xs-8">
+                                    <input type="password" id="txt-name" name="pass" ng-model="editing.pass" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-8 col-xs-offset-4">
+                                    <label class="check">
+                                        <input type="checkbox" ng-model="editing.stt"/>
+                                        &nbsp;Hoạt động
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
+                            <button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="ajax.save">Ghi lại</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</angular>
