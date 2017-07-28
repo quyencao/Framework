@@ -41,4 +41,4 @@ $routes[] = new MvcContext('/article', 'GET', "App\\Controller\\MainCtrl", 'inde
 $routes[] = new MvcContext('/test', 'GET', "App\\Controller\\MainCtrl", 'test');
 $routes[] = new MvcContext('/all', 'GET', "App\\Controller\\MainCtrl", 'allad');
 
-require_once ('routes-test.php');
+require_once ('routes.quyen.php');

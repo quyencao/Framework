@@ -77,7 +77,6 @@ RED.ngApp.controller('groupCtrl', function ($scope, $timeout, $apply, $http) {
     };
 
     $scope.edit = function (group) {
-        console.log('here');
         group = group || {'id': 0, 'stt': true};
         $scope.editing = $.extend({}, group);
         $scope.editing.checked = {};

@@ -9,22 +9,29 @@
 namespace App\Controller\Rest;
 
 use App\Model\UserTestMapper;
+use App\Model\DepartmentMapper;
 use Lib\Json;
 
 class UserTestCtrl extends RestCtrl
 {
     protected $userTestMapper;
+    protected $departmentMapper;
 
     protected function init()
     {
         parent::init();
         $this->userTestMapper = UserTestMapper::makeInstance();
+        $this->departmentMapper = DepartmentMapper::makeInstance();
     }
 
     function getUsersTest() {
         $this->requireLogin();
 
         $usersTest = $this->userTestMapper->makeInstance()
+                ->select('user_test.*')
+                ->select('dept.depName', false)
+                ->innerJoin('cores_department dept ON dept.id = user_test.depID')
+                ->orderBy('user_test.deleted')
                 ->getAll();
 
         $this->resp->setBody(Json::encode($usersTest));
@@ -43,8 +50,6 @@ class UserTestCtrl extends RestCtrl
     function updateUsersTest($id) {
         $this->requireLogin();
         $user = $this->restInput();
-
-//        $this->resp->setBody(Json::encode($user['deleted']));
 
         $id = $this->userTestMapper->updateUser($id, $user);
 

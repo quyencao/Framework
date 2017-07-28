@@ -14,7 +14,7 @@ class UserTestCtrl extends CoreCtrl
 {
     public function userTest() {
         $this->requireAdmin();
-        $this->twoColsLayout->render('UserTest/user-test.phtml');
+        $this->twoColsLayout->setSideMenuActive('user-test')->render('UserTest/user-test.phtml');
 //        $this->resp->setBody('<h1>Test</h1>');
 //        $this->twoColsLayout->render('');
     }

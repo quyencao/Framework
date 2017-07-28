@@ -19,11 +19,7 @@ $(function () {
             depID: {
                 validators: {
                     notEmpty: {
-                        message: 'Vui lòng nhập phòng ban'
-                    },
-                    regexp: {
-                        regexp: /^\d+$/,
-                        message: 'Vui lòng nhập phòng ban bằng số'
+                        message: 'Vui lòng nhập đơn vị'
                     }
                 }
             },
@@ -60,13 +56,14 @@ RED.ngApp.controller('userTestCtrl', function ($scope, $http, $apply, $timeout) 
     $scope.ajax = {};
     $scope.checked = {};
     $scope.modalEdit;
+    $scope.department;
 
     $scope.getUsersTest = function () {
         if ($scope.ajax.get)
             $scope.ajax.get.abort();
 
         $scope.ajax.get = $.ajax({
-            url: CONFIG.siteUrl + '/rest/test',
+            url: CONFIG.siteUrl + '/rest/userTest/search',
             dataType: 'json'
         }).done(function (resp) {
             $apply(function () {
@@ -96,7 +93,7 @@ RED.ngApp.controller('userTestCtrl', function ($scope, $http, $apply, $timeout) 
         if (!confirm('Bạn chắc chắn muốn xóa những đối tượng này?'))
             return;
 
-        $http.delete(CONFIG.siteUrl + '/rest/test', {data: {'id': $scope.getChecked()}}).then(function (res) {
+        $http.delete(CONFIG.siteUrl + '/rest/userTest', {data: {'id': $scope.getChecked()}}).then(function (res) {
             $scope.getUsersTest();
             $scope.checked = {};
             $scope.checkedAll = false;
@@ -108,6 +105,13 @@ RED.ngApp.controller('userTestCtrl', function ($scope, $http, $apply, $timeout) 
         $scope.editing = $.extend({}, userTest);
 
         $scope.editing.stt = userTest.deleted == 0;
+        $scope.selectedDep = null;
+        if(userTest.depID && userTest.depName) {
+            $scope.selectedDep = {
+                id: userTest.depID,
+                depName: userTest.depName
+            };
+        }
 
         $timeout(function () {
             $($scope.modalEdit).modal('show');
@@ -122,12 +126,27 @@ RED.ngApp.controller('userTestCtrl', function ($scope, $http, $apply, $timeout) 
 
         var userTest = $.extend({}, $scope.editing);
         userTest.deleted = $scope.editing.stt ? 0 : 1;
+        userTest.depID = $scope.selectedDep.id;
 
-        $http.put(CONFIG.siteUrl + '/rest/test/' + userTest.id, userTest)
+        $http.put(CONFIG.siteUrl + '/rest/userTest/' + userTest.id, userTest)
             .then(function (res) {
                 $($scope.modalEdit).modal('hide');
                 $scope.getUsersTest();
             });
+    };
+
+    $scope.pickEditDept = function () {
+        $('[ng-department-picker]')[0].openModal({
+            'submit': function (dep) {
+                $apply(function () {
+                    $scope.selectedDep = dep;
+                });
+            }
+        });
+    };
+
+    $scope.clearSelectedDep = function () {
+        $scope.selectedDep = null;
     };
 
 });
